@@ -5,34 +5,37 @@ Per the boss's brief: the page opens on the HKTCG logo wall and scroll slowly
 pushes forward, arriving beside the boxed **T** — then doors, museum, showcase
 hall, and the grand-floor reveal.
 
-**The raw videos are NOT used on the site.** All six scenes are AI-generated
-(Higgsfield **GPT Image 2**, `gpt_image_2`, 2k) using frames from the two
-source videos as reference images, so they match the real venue's look:
-white space, crimson accents, backlit shelving, the card-tile wordmark with
-the boxed T, tagline "PLAY. COLLECT. CONNECT."
+**The raw videos are NOT used on the site.** The pipeline is fully generated:
+video frames → **GPT Image 2** stills (reference-conditioned, matching the
+real venue) → **Kling v3** image-to-video walkthrough clips (dolly/pan/orbit
+camera moves, 5s each, silent) → frames → scroll scrub. Scrolling walks you
+through the store with real parallax.
 
 ## Files
 ```
 index.html            hero + landing (collections / new store / services / visit)
 styles.css            white + signage-crimson palette
-main.js               scroll-camera engine (push/pan per scene + crossfades)
-assets/scenes/        scene-1-logo … scene-6-vending (1800px JPEG, ~1.3 MB total)
+main.js               scroll-film engine (canvas frame scrub + blend)
+assets/film/          f-001 … f-175 (35 frames × 5 clips, 1280px, ~8 MB)
+assets/scenes/        the 6 master stills (also used in landing cards)
 ```
 
 ## Engine
-Each scene is a full-bleed `object-fit: cover` image; scroll drives a
-per-scene camera (`scale` + `translate` between `from`/`to` keys in
-`SCENES`, main.js) with short crossfades at the window edges. Native scroll,
-no dependencies, IO reveals below the fold. Reduced motion collapses the
-hero to one viewport.
+Canvas frame scrub (from the SolaraLab site): scroll maps to a fractional
+frame index, base frame + alpha-blended next frame, nearest-loaded fallback.
+Each clip owns 20% of the hero scroll. Native scroll, no dependencies,
+IO reveals below the fold. Reduced motion collapses the hero to one viewport.
 
-## Regenerating scenes
-References were video frames uploaded via the Higgsfield MCP
-(`media_upload` → `media_confirm`), then `generate_image` with
-`model: gpt_image_2, aspect_ratio: 3:2, resolution: 2k, quality: medium`
-(3 credits each). Prompts describe: logo wall / slat-door entrance /
-red-cube museum / stocked showcase hall / grand floor with ring light /
-vending aisle. Regenerate any scene and drop it into `assets/scenes/`.
+## Regenerating
+1. Stills: `generate_image` `gpt_image_2` (3:2, 2k medium, 3 cr) with a venue
+   frame as reference — prompts describe logo wall / doors / museum / hall /
+   grand floor / vending.
+2. Motion: `generate_video` `kling3_0` (std, sound off, 5s, 7.5 cr) with the
+   still's job_id as `start_image` and a camera-move prompt
+   (dolly-in / walk-through / orbit / lateral pan / aisle dolly).
+3. Frames: `ffmpeg -i clip.mp4 -vf "fps=7" -frames:v 35 -q:v 6 c%d-%03d.jpg`,
+   rename sequentially into `assets/film/`, update `__FRAME_COUNT` in
+   index.html if counts change.
 
 ## Facts used in copy (from the Grand Opening video, 2026-07-04)
 26,000 sq ft (兩萬六千呎) · 零售 鑑定 收藏 對戰 展覽 · HK$80M museum

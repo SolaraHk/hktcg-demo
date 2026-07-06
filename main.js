@@ -1,71 +1,89 @@
 /* ============================================================
-   HKTCG — scroll-cinema hero (generated scenes edition)
-   Scenes are AI-generated (Higgsfield GPT Image 2) from the
-   venue footage — the raw video is NOT used on the site.
-   Engine: scroll-driven camera per scene (push/pan) + crossfades,
-   native scroll, IO reveals. Flow per the boss's brief:
-     1 logo wall — slow push forward, arriving beside the boxed T
-     2 slat doors — push through the opening
-     3 collectible museum — drift past the red cube
-     4 showcase hall — pan 向左向右 across the shelves
-     5 grand floor — pull-back reveal, Explore More
+   HKTCG — scroll-film hero (generated walkthrough edition)
+   Five AI-generated clips (Higgsfield: GPT Image 2 stills →
+   Kling v3 image-to-video camera moves), cut into frames and
+   scrubbed by scroll — the raw store videos are NOT used.
+     scene 1  logo wall — dolly forward, arrive beside the boxed T
+     scene 2  slat doors — walk through the opening
+     scene 3  collectible museum — drift around the red cube
+     scene 4  showcase hall — pan 向左向右 across the shelves
+     scene 5  grand floor — walk the aisle under the ring light
+   Engine: canvas frame scrub, fractional blend, nearest-loaded
+   fallback (from the SolaraLab site), native scroll, IO reveals.
    ============================================================ */
 (function () {
   "use strict";
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- scroll-scrub canvas ---------- */
+  var COUNT = window.__FRAME_COUNT || 175; // set in index.html after the cut
+  var FRAME = function (i) { return "assets/film/f-" + String(i + 1).padStart(3, "0") + ".jpg"; };
+
+  var canvas = document.getElementById("film");
+  var ctx = canvas ? canvas.getContext("2d") : null;
   var hero = document.getElementById("hero");
+  var frames = [], anyLoaded = false;
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  var cw = 0, ch = 0;
 
-  /* ---------- scene timeline ----------
-     a/b: scroll window (with crossfade overlap)
-     cam: {from:{s,x,y}, to:{s,x,y}} — x/y are focal drift in % of
-     the stage box, applied as translate; s is scale about center. */
-  var SCENES = [
-    { id: "sc1", a: 0.00, b: 0.26, cam: { from: { s: 1.02, x: 0, y: 0 },     to: { s: 1.38, x: 6, y: 2 } } },
-    { id: "sc2", a: 0.22, b: 0.46, cam: { from: { s: 1.05, x: -2, y: 0 },    to: { s: 1.32, x: -6, y: 1 } } },
-    { id: "sc3", a: 0.42, b: 0.64, cam: { from: { s: 1.12, x: 4, y: 1 },     to: { s: 1.26, x: -4, y: -1 } } },
-    { id: "sc4", a: 0.60, b: 0.84, cam: { from: { s: 1.22, x: 8, y: 0 },     to: { s: 1.22, x: -8, y: 0 } } },
-    { id: "sc5", a: 0.80, b: 1.001, cam: { from: { s: 1.24, x: 0, y: 2 },    to: { s: 1.0, x: 0, y: 0 } } }
-  ];
-  SCENES.forEach(function (sc) { sc.el = document.getElementById(sc.id); });
-
-  function clamp01(v) { return v < 0 ? 0 : (v > 1 ? 1 : v); }
-  function ramp(p, a, b) { return clamp01((p - a) / (b - a)); }
-  function ease(t) { return t * t * (3 - 2 * t); }
-  var FADE = 0.04; // crossfade width at each window edge
+  function resize() {
+    if (!canvas) return;
+    cw = canvas.clientWidth; ch = canvas.clientHeight;
+    canvas.width = Math.round(cw * dpr);
+    canvas.height = Math.round(ch * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function blit(img, alpha) {
+    if (!img || !img.complete || !img.naturalWidth) return false;
+    var s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+    var w = img.naturalWidth * s, h = img.naturalHeight * s;
+    ctx.globalAlpha = alpha;
+    ctx.drawImage(img, (cw - w) / 2, (ch - h) * 0.45, w, h);
+    ctx.globalAlpha = 1;
+    return true;
+  }
+  function ok(i) { return frames[i] && frames[i].complete && frames[i].naturalWidth; }
+  function nearest(i) {
+    if (ok(i)) return i;
+    for (var d = 1; d < COUNT; d++) {
+      if (ok(i - d)) return i - d;
+      if (ok(i + d)) return i + d;
+    }
+    return -1;
+  }
+  function render(fi) {
+    if (!ctx) return;
+    var i0 = Math.floor(fi), frac = fi - i0, i1 = Math.min(COUNT - 1, i0 + 1);
+    var base = nearest(i0); if (base < 0) return;
+    blit(frames[base], 1);
+    if (frac > 0.01 && base === i0 && ok(i1)) blit(frames[i1], frac);
+  }
+  if (canvas && ctx) {
+    resize();
+    for (var i = 0; i < COUNT; i++) {
+      var img = new Image(); img.decoding = "async";
+      img.onload = (function (idx) { return function () {
+        anyLoaded = true; if (idx === 0) update();
+      }; })(i);
+      img.src = FRAME(i); frames[i] = img;
+    }
+  }
 
   function heroProgress() {
     if (!hero) return 0;
     var r = hero.getBoundingClientRect();
     var total = r.height - window.innerHeight;
-    return total > 0 ? clamp01(-r.top / total) : 0;
+    return total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
   }
 
-  function drawScenes(p) {
-    SCENES.forEach(function (sc) {
-      if (!sc.el) return;
-      var vis = Math.min(ramp(p, sc.a, sc.a + FADE), 1 - ramp(p, sc.b - FADE, sc.b));
-      vis = clamp01(vis);
-      // keep the first scene up before any scroll, the last at the end
-      if (sc.a === 0) vis = Math.max(vis, 1 - ramp(p, sc.b - FADE, sc.b));
-      if (sc.b > 1) vis = Math.max(vis, ramp(p, sc.a, sc.a + FADE));
-      if (vis <= 0.001) { sc.el.style.opacity = 0; sc.el.style.visibility = "hidden"; return; }
-      sc.el.style.visibility = "visible";
-      sc.el.style.opacity = vis.toFixed(3);
-      var t = ease(ramp(p, sc.a, sc.b));
-      var s = sc.cam.from.s + (sc.cam.to.s - sc.cam.from.s) * t;
-      var x = sc.cam.from.x + (sc.cam.to.x - sc.cam.from.x) * t;
-      var y = sc.cam.from.y + (sc.cam.to.y - sc.cam.from.y) * t;
-      sc.el.style.transform = "translate3d(" + x + "%," + y + "%,0) scale(" + s.toFixed(4) + ")";
-    });
-  }
-
-  /* ---------- overlays keyed to scroll ---------- */
+  /* ---------- overlays keyed to scroll (scenes are 20% each) ---------- */
+  function ramp(p, a, b) { return Math.min(1, Math.max(0, (p - a) / (b - a))); }
   var overlays = [
-    [document.getElementById("ov1"), -0.05, 0.105],
-    [document.getElementById("ov2"), 0.115, 0.24],
-    [document.getElementById("ov3"), 0.27, 0.42],
-    [document.getElementById("ov4"), 0.45, 0.61],
-    [document.getElementById("ov5"), 0.64, 0.80],
+    [document.getElementById("ov1"), -0.05, 0.095],
+    [document.getElementById("ov2"), 0.115, 0.215],
+    [document.getElementById("ov3"), 0.24, 0.38],
+    [document.getElementById("ov4"), 0.44, 0.58],
+    [document.getElementById("ov5"), 0.63, 0.78],
     [document.getElementById("ov6"), 0.87, 1.01]
   ];
   var hint = document.getElementById("hint");
@@ -76,11 +94,11 @@
   function update() {
     ticking = false;
     var p = heroProgress();
-    drawScenes(p);
+    if (anyLoaded) render(p * (COUNT - 1));
     overlays.forEach(function (o) {
       var el = o[0]; if (!el) return;
       var vis = Math.min(ramp(p, o[1], o[1] + 0.035), 1 - ramp(p, o[2] - 0.035, o[2]));
-      vis = clamp01(vis);
+      vis = Math.min(1, Math.max(0, vis));
       el.style.opacity = vis.toFixed(3);
       el.style.transform = "translateY(" + (14 * (1 - vis)) + "px)";
     });
@@ -94,9 +112,8 @@
     if (!ticking) { ticking = true; requestAnimationFrame(update); }
   }
   window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
+  window.addEventListener("resize", function () { resize(); onScroll(); }, { passive: true });
 
-  // reduced motion: no film — land on the content with the first scene as poster
   if (reduceMotion && hero) hero.style.height = "100vh";
   update();
 

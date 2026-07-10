@@ -231,8 +231,8 @@ button {
 }
 
 .cinema[data-mode="cinema"] {
-  height: 700vh;
-  height: 700svh;
+  height: 480vh;
+  height: 480svh;
 }
 
 .cinema-stage {
@@ -281,35 +281,13 @@ button {
 .cinema-vignette {
   z-index: 2;
   pointer-events: none;
-  background: linear-gradient(180deg, oklch(0.147 0.009 270 / 0.18), oklch(0.147 0.009 270 / 0) 30%, oklch(0.147 0.009 270 / 0) 64%, oklch(0.147 0.009 270 / 0.42));
-}
-
-.cinema-vignette::before,
-.cinema-vignette::after {
-  position: absolute;
-  inset: 0;
-  content: "";
-  transition: opacity 480ms ease;
-}
-
-.cinema-vignette::before {
-  background: linear-gradient(90deg, oklch(0.147 0.009 270 / 0.84) 0%, oklch(0.147 0.009 270 / 0.54) 27%, oklch(0.147 0.009 270 / 0.1) 52%, oklch(0.147 0.009 270 / 0) 70%);
-  opacity: 1;
-}
-
-.cinema-vignette::after {
-  background: linear-gradient(270deg, oklch(0.147 0.009 270 / 0.84) 0%, oklch(0.147 0.009 270 / 0.54) 27%, oklch(0.147 0.009 270 / 0.1) 52%, oklch(0.147 0.009 270 / 0) 70%);
-  opacity: 0.18;
-}
-
-.cinema[data-active="1"] .cinema-vignette::before,
-.cinema[data-active="3"] .cinema-vignette::before {
-  opacity: 0.18;
-}
-
-.cinema[data-active="1"] .cinema-vignette::after,
-.cinema[data-active="3"] .cinema-vignette::after {
-  opacity: 1;
+  background: linear-gradient(
+    180deg,
+    oklch(0.147 0.009 270 / 0.32) 0%,
+    oklch(0.147 0.009 270 / 0) 28%,
+    oklch(0.147 0.009 270 / 0.04) 58%,
+    oklch(0.147 0.009 270 / 0.74) 100%
+  );
 }
 
 .cinema-overlays {
@@ -317,35 +295,31 @@ button {
   pointer-events: none;
 }
 
-.cinema-cue {
-  --cue-opacity: 0;
-  --cue-shift: 1.75rem;
-  --cue-scale: 0.985;
+.cinema-moment {
+  --moment-opacity: 0;
+  --moment-shift: 1.125rem;
   position: absolute;
-  top: 50%;
-  width: min(39rem, 42vw);
-  opacity: var(--cue-opacity);
-  transform: translate3d(0, calc(-50% + var(--cue-shift)), 0) scale(var(--cue-scale));
-  transform-origin: left center;
-  will-change: opacity, transform;
-}
-
-.cinema-cue:first-child {
-  --cue-opacity: 1;
-  --cue-shift: 0px;
-  --cue-scale: 1;
-}
-
-.cinema-cue--left {
-  left: var(--page-pad);
-}
-
-.cinema-cue--right {
   right: var(--page-pad);
-  transform-origin: right center;
+  bottom: clamp(7.5rem, 13vh, 10rem);
+  left: var(--page-pad);
+  width: min(46rem, 84vw);
+  margin: 0;
+  opacity: var(--moment-opacity);
+  color: var(--architectural-white);
+  font-family: var(--font-display), "Arial Narrow", sans-serif;
+  font-size: clamp(3.6rem, 6.4vw, 6rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  text-wrap: balance;
+  transform: translate3d(0, var(--moment-shift), 0);
 }
 
-.cinema-marker,
+.cinema-moment:first-child {
+  --moment-opacity: 1;
+  --moment-shift: 0px;
+}
+
 .section-marker {
   display: flex;
   align-items: center;
@@ -359,11 +333,6 @@ button {
   text-transform: uppercase;
 }
 
-.cinema-marker {
-  color: var(--architectural-white);
-}
-
-.cinema-marker::before,
 .section-marker::before {
   width: 3rem;
   height: 0.25rem;
@@ -372,11 +341,6 @@ button {
   content: "";
 }
 
-.cinema-marker span {
-  color: var(--signal-red);
-}
-
-.cinema-title,
 .tour-end h2,
 .visit-section h2,
 .experience-section h2,
@@ -390,36 +354,40 @@ button {
   text-wrap: balance;
 }
 
-.cinema-title {
+.cinema-moment--opening,
+.cinema-moment--closing,
+.static-statement--opening,
+.static-statement--closing {
+  max-width: 10ch;
+}
+
+.cinema-moment--trading,
+.static-statement--trading {
   max-width: 9ch;
-  margin-top: clamp(1.2rem, 2.5vh, 2rem);
-  font-size: clamp(4rem, 7vw, 7rem);
-  line-height: 0.88;
 }
 
-.cinema-title--trading {
-  max-width: 8.5ch;
-}
-
-.cinema-title--trading span,
-.cinema-title--trading strong {
+.cinema-moment--trading span,
+.cinema-moment--trading strong,
+.static-statement--trading span,
+.static-statement--trading strong {
   display: block;
 }
 
-.cinema-title--trading span {
+.cinema-moment--trading span,
+.static-statement--trading span {
   font-size: 0.56em;
   letter-spacing: 0.01em;
   line-height: 1.05;
 }
 
-.cinema-title--trading strong {
+.cinema-moment--trading strong,
+.static-statement--trading strong {
   color: var(--signal-red);
   font-size: 1.12em;
   font-weight: 800;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.035em;
 }
 
-.cinema-body,
 .visit-copy > p,
 .experience-copy > p,
 .services-heading > p,
@@ -430,37 +398,6 @@ button {
   font-size: clamp(1rem, 1.18vw, 1.125rem);
   line-height: 1.62;
   text-wrap: pretty;
-}
-
-.cinema-body {
-  max-width: 44ch;
-  color: oklch(0.971 0.004 106 / 0.9);
-}
-
-.cinema-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1.25rem;
-  margin-top: 2rem;
-}
-
-.cinema-inline-link {
-  display: inline-flex;
-  min-height: 2.75rem;
-  align-items: center;
-  gap: 1rem;
-  border-bottom: 2px solid var(--architectural-white);
-  font-family: var(--font-display), "Arial Narrow", sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition: color 180ms ease, border-color 180ms ease;
-}
-
-.cinema-inline-link:hover {
-  border-color: var(--signal-red);
-  color: var(--signal-red);
 }
 
 .button {
@@ -549,7 +486,7 @@ button {
   bottom: max(1.4rem, env(safe-area-inset-bottom));
   left: var(--page-pad);
   display: grid;
-  grid-template-columns: auto minmax(8rem, 20rem) auto;
+  grid-template-columns: minmax(8rem, 1fr) auto;
   gap: 1rem;
   align-items: center;
   color: oklch(0.971 0.004 106 / 0.76);
@@ -557,6 +494,23 @@ button {
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cinema-loading {
+  position: absolute;
+  z-index: 5;
+  top: calc(var(--header-height) + 1rem);
+  left: var(--page-pad);
+  min-height: 2.75rem;
+  margin: 0;
+  color: var(--architectural-white);
+  font-family: var(--font-display), "Arial Narrow", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.055em;
+  line-height: 2.75rem;
+  text-shadow: 0 1px 3px var(--obsidian);
   text-transform: uppercase;
 }
 
@@ -648,20 +602,28 @@ button {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(90deg, oklch(0.147 0.009 270 / 0.82), oklch(0.147 0.009 270 / 0.22) 68%, oklch(0.147 0.009 270 / 0.05));
+  background: linear-gradient(
+    180deg,
+    oklch(0.147 0.009 270 / 0.16),
+    oklch(0.147 0.009 270 / 0.05) 46%,
+    oklch(0.147 0.009 270 / 0.82)
+  );
   content: "";
 }
 
-.static-scene[data-align="right"] {
-  justify-content: flex-end;
-}
-
-.static-scene[data-align="right"]::after {
-  background: linear-gradient(270deg, oklch(0.147 0.009 270 / 0.82), oklch(0.147 0.009 270 / 0.22) 68%, oklch(0.147 0.009 270 / 0.05));
-}
-
 .static-scene__copy {
-  width: min(39rem, 46vw);
+  width: min(46rem, 84vw);
+}
+
+.static-statement {
+  margin: 0;
+  color: var(--architectural-white);
+  font-family: var(--font-display), "Arial Narrow", sans-serif;
+  font-size: clamp(3.6rem, 6.4vw, 6rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  text-wrap: balance;
 }
 
 .tour-end {
@@ -964,9 +926,6 @@ button {
     display: none;
   }
 
-  .cinema-cue {
-    width: min(36rem, 47vw);
-  }
 }
 
 @media (max-width: 62rem) {
@@ -1088,8 +1047,8 @@ button {
   }
 
   .cinema[data-mode="cinema"] {
-    height: 600vh;
-    height: 600svh;
+    height: 400vh;
+    height: 400svh;
   }
 
   .cinema-poster img,
@@ -1098,59 +1057,24 @@ button {
   }
 
   .cinema-vignette {
-    background: linear-gradient(180deg, oklch(0.147 0.009 270 / 0.22), oklch(0.147 0.009 270 / 0) 24%, oklch(0.147 0.009 270 / 0.08) 51%, oklch(0.147 0.009 270 / 0.88) 100%);
+    background: linear-gradient(
+      180deg,
+      oklch(0.147 0.009 270 / 0.26),
+      oklch(0.147 0.009 270 / 0) 30%,
+      oklch(0.147 0.009 270 / 0.08) 52%,
+      oklch(0.147 0.009 270 / 0.88) 100%
+    );
   }
 
-  .cinema-vignette::before,
-  .cinema-vignette::after {
-    display: none;
-  }
-
-  .cinema-cue,
-  .cinema-cue--left,
-  .cinema-cue--right {
-    top: auto;
+  .cinema-moment {
     right: max(1.15rem, env(safe-area-inset-right));
     bottom: max(5.75rem, calc(env(safe-area-inset-bottom) + 4.8rem));
     left: max(1.15rem, env(safe-area-inset-left));
     width: auto;
-    transform: translate3d(0, var(--cue-shift), 0) scale(var(--cue-scale));
-    transform-origin: left bottom;
-  }
-
-  .cinema-marker {
-    font-size: 0.78rem;
-  }
-
-  .cinema-marker::before {
-    width: 2.15rem;
-  }
-
-  .cinema-title {
-    max-width: 8ch;
-    margin-top: 0.85rem;
-    font-size: clamp(3.4rem, 15vw, 5.5rem);
-    line-height: 0.88;
-  }
-
-  .cinema-title--trading {
-    max-width: 7.7ch;
-  }
-
-  .cinema-body {
-    max-width: 34rem;
-    margin-top: 1rem;
-    font-size: 0.98rem;
-    line-height: 1.52;
-  }
-
-  .cinema-actions {
-    gap: 0.9rem;
-    margin-top: 1.25rem;
-  }
-
-  .cinema-inline-link {
-    font-size: 0.9rem;
+    max-width: none;
+    font-size: clamp(3.15rem, 14vw, 5rem);
+    line-height: 0.92;
+    transform: translate3d(0, var(--moment-shift), 0);
   }
 
   .button {
@@ -1163,22 +1087,28 @@ button {
     right: max(1.15rem, env(safe-area-inset-right));
     bottom: max(1rem, env(safe-area-inset-bottom));
     left: max(1.15rem, env(safe-area-inset-left));
-    grid-template-columns: auto 1fr;
+    grid-template-columns: minmax(5rem, 1fr) auto;
     font-size: 0.72rem;
   }
 
-  .cinema-status > span:last-child {
-    display: none;
-  }
-
-  .cinema[data-film-ready="false"] .cinema-status > span:last-child {
-    display: block;
-    grid-column: 1 / -1;
-    color: var(--architectural-white);
+  .cinema-loading {
+    top: calc(var(--header-height) + 0.5rem);
+    left: max(1.15rem, env(safe-area-inset-left));
+    max-width: 42vw;
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.72rem;
+    line-height: 1.25;
   }
 
   .cinema-skip {
-    display: none;
+    top: calc(var(--header-height) + 0.5rem);
+    right: max(1.15rem, env(safe-area-inset-right));
+    min-height: 2.75rem;
+    max-width: 45vw;
+    font-size: 0.72rem;
+    text-align: right;
   }
 
   .static-scene {
@@ -1188,13 +1118,17 @@ button {
     padding: calc(var(--header-height) + 3rem) max(1.15rem, env(safe-area-inset-right)) max(3rem, env(safe-area-inset-bottom)) max(1.15rem, env(safe-area-inset-left));
   }
 
-  .static-scene::after,
-  .static-scene[data-align="right"]::after {
+  .static-scene::after {
     background: linear-gradient(180deg, oklch(0.147 0.009 270 / 0.08), oklch(0.147 0.009 270 / 0.16) 48%, oklch(0.147 0.009 270 / 0.9));
   }
 
   .static-scene__copy {
     width: 100%;
+  }
+
+  .static-statement {
+    font-size: clamp(3.15rem, 14vw, 5rem);
+    line-height: 0.92;
   }
 
   .tour-end {

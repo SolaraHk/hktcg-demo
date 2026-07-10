@@ -22,16 +22,16 @@ Cinematic, precise, and community-charged. The voice is confident, direct, bilin
 - Neon gamer styling, cyberpunk effects, and visual noise used as shorthand for trading-card culture.
 - Cold luxury-fashion minimalism that makes newcomers feel excluded.
 - Free-roam 3D experiences that delay useful information or perform poorly on mobile.
-- One long video tied directly to scroll position.
+- Raw, unedited walkthrough footage with no authored pacing or accessible fallback.
 - Unverified superlatives, investment figures, collection values, or contradictory store-size claims.
 
 ## Design Principles
 
 1. Make the real store the hero: use its architecture, people, displays, and owner story as the primary visual language.
-2. Guide, do not trap: the walkthrough is chaptered, skippable, reversible, and followed by clear practical actions.
+2. Guide, do not trap: the one-shot walk is skippable, reversible, and followed by clear practical actions.
 3. Turn the physical red plaque T into the narrative midpoint and state the owner's line plainly: “The T stands for Trading.”
 4. Welcome both experts and first-timers: pair specialist credibility with clear, jargon-light explanations and inclusive imagery.
-5. Preserve authenticity across motion: use real footage and short controlled transitions; generative tools may polish bridges but must not redesign the store.
+5. Preserve authenticity across motion: the hero uses one real continuous take. Generative tools must not redesign the store, its signage, or the plaque T.
 
 ## Accessibility & Inclusion
 

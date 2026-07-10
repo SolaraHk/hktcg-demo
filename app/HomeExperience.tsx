@@ -11,138 +11,94 @@ type LocalizedText = {
   zh: string;
 };
 
-type CinemaCue = {
-  id: string;
-  marker: LocalizedText;
-  title: LocalizedText;
-  body: LocalizedText;
+type StoreScene = {
   posterDesktop: string;
   posterMobile: string;
   alt: LocalizedText;
-  align: "left" | "right";
-  action?: LocalizedText;
-  actionHref?: string;
 };
 
-const cinemaCues: CinemaCue[] = [
-  {
-    id: "entrance",
-    marker: { en: "iSQUARE · Tsim Sha Tsui", zh: "iSQUARE · 尖沙咀" },
-    title: {
-      en: "Enter Hong Kong’s card destination.",
-      zh: "走進香港的卡牌目的地。",
-    },
-    body: {
-      en: "Cards to collect. Tables to play. People to meet. Step inside HKTCG.",
-      zh: "有卡可收，有枱可打，有同好可識。走進 HKTCG。",
-    },
-    posterDesktop: "/media/cinematic/entrance-desktop.jpg",
-    posterMobile: "/media/cinematic/entrance-mobile.jpg",
+type CinemaMoment = {
+  id: "opening" | "trading" | "closing";
+  start: number;
+  end: number;
+  statement: LocalizedText;
+  posterDesktop: string;
+  posterMobile: string;
+  alt: LocalizedText;
+};
+
+const storeScenes: Record<"entrance" | "trading" | "collect" | "community", StoreScene> = {
+  entrance: {
+    posterDesktop: "/media/cinematic/entrance-oneshot-desktop.jpg",
+    posterMobile: "/media/cinematic/entrance-oneshot-mobile.jpg",
     alt: {
-      en: "Visitors enter HKTCG through its red architectural frame.",
-      zh: "訪客穿過紅色建築門框進入 HKTCG。",
+      en: "The HKTCG entrance reveals its illuminated card wall and logo.",
+      zh: "從 HKTCG 入口可見發光卡牌牆及品牌標誌。",
     },
-    align: "left",
   },
-  {
-    id: "trading",
-    marker: { en: "At the centre", zh: "店舖中央" },
-    title: {
-      en: "The T stands for Trading.",
-      zh: "T，代表 Trading——交易。",
-    },
-    body: {
-      en: "Hundreds of suspended red plaques shift from pattern to letter. Find the angle, and the T appears.",
-      zh: "數百塊紅色懸掛牌片，從圖案逐步拼成字母。走到對的角度，T 就會出現。",
-    },
+  trading: {
     posterDesktop: "/media/cinematic/trading-desktop.jpg",
     posterMobile: "/media/cinematic/trading-mobile.jpg",
     alt: {
       en: "Suspended red plaques align into a large T at the centre of HKTCG.",
       zh: "懸掛的紅色牌片在 HKTCG 中央拼成大型 T 字。",
     },
-    align: "right",
   },
-  {
-    id: "collect",
-    marker: { en: "Collect", zh: "收藏" },
-    title: {
-      en: "A museum for cards.",
-      zh: "一座卡牌博物館。",
-    },
-    body: {
-      en: "Rows of cards line the illuminated collection wall. Stop, compare and find the one that pulls you in.",
-      zh: "一排排卡牌陳列在發光收藏牆上。停下來、比較一下，再找出吸引你的那一張。",
-    },
+  collect: {
     posterDesktop: "/media/cinematic/collect-desktop.jpg",
     posterMobile: "/media/cinematic/collect-mobile.jpg",
     alt: {
       en: "Trading cards line HKTCG’s illuminated collection wall.",
       zh: "卡牌排列在 HKTCG 的發光收藏牆上。",
     },
-    align: "left",
-    action: { en: "Browse cards", zh: "瀏覽卡牌" },
-    actionHref: "https://www.hktcg.com/en",
   },
-  {
-    id: "services",
-    marker: { en: "Trade · Grade · Consign", zh: "交易 · 評級 · 寄賣" },
-    title: {
-      en: "Your cards. Your next move.",
-      zh: "你的卡。你的下一步。",
-    },
-    body: {
-      en: "Bring your cards to the counter. Ask the team about trading, authentication, grading or consignment.",
-      zh: "把卡帶到櫃檯，向團隊查詢交易、真偽鑑定、評級或寄賣。",
-    },
-    posterDesktop: "/media/cinematic/services-desktop.jpg",
-    posterMobile: "/media/cinematic/services-mobile.jpg",
-    alt: {
-      en: "Visitors gather at the red HKTCG service counter.",
-      zh: "訪客在紅色 HKTCG 服務櫃檯前聚集。",
-    },
-    align: "right",
-    action: { en: "Explore card services", zh: "了解卡牌服務" },
-    actionHref: "https://asset.hktcg.com",
-  },
-  {
-    id: "community",
-    marker: { en: "Play · Events · Community", zh: "對戰 · 活動 · 社群" },
-    title: {
-      en: "Bring a deck. Join the table.",
-      zh: "帶副牌來。坐低開局。",
-    },
-    body: {
-      en: "Practise, compete, meet other players—or sit down for your first game.",
-      zh: "練習、比賽、認識其他玩家，或者開始你的第一局。",
-    },
+  community: {
     posterDesktop: "/media/cinematic/community-desktop.jpg",
     posterMobile: "/media/cinematic/community-mobile.jpg",
     alt: {
       en: "Players sit across long tables in HKTCG’s red-and-white play area.",
       zh: "玩家坐在 HKTCG 紅白對戰區的長枱兩旁。",
     },
-    align: "left",
-    action: { en: "See what’s on", zh: "查看最新活動" },
-    actionHref: "https://www.instagram.com/hktcg.isquare/",
+  },
+};
+
+const cinemaMoments: CinemaMoment[] = [
+  {
+    id: "opening",
+    start: 0,
+    end: 0.18,
+    statement: { en: "Walk inside HKTCG.", zh: "走進 HKTCG。" },
+    posterDesktop: storeScenes.entrance.posterDesktop,
+    posterMobile: storeScenes.entrance.posterMobile,
+    alt: storeScenes.entrance.alt,
+  },
+  {
+    id: "trading",
+    start: 0.24,
+    end: 0.58,
+    statement: { en: "The T stands for Trading.", zh: "T，代表 Trading——交易。" },
+    posterDesktop: storeScenes.trading.posterDesktop,
+    posterMobile: storeScenes.trading.posterMobile,
+    alt: storeScenes.trading.alt,
+  },
+  {
+    id: "closing",
+    start: 0.9,
+    end: 1,
+    statement: { en: "Now make it your visit.", zh: "接下來，親身來。" },
+    posterDesktop: storeScenes.community.posterDesktop,
+    posterMobile: storeScenes.community.posterMobile,
+    alt: storeScenes.community.alt,
   },
 ];
 
-const cueRanges = [
-  { start: 0, end: 0.18 },
-  { start: 0.18, end: 0.43 },
-  { start: 0.43, end: 0.64 },
-  { start: 0.64, end: 0.82 },
-  { start: 0.82, end: 1 },
-] as const;
-
 const filmMap = [
   { progress: 0, time: 0 },
-  { progress: 0.18, time: 3.85 },
-  { progress: 0.43, time: 11.49 },
-  { progress: 0.64, time: 12.83 },
-  { progress: 0.82, time: 15.05 },
-  { progress: 1, time: 19.2 },
+  { progress: 0.18, time: 4.75 },
+  { progress: 0.52, time: 10.05 },
+  { progress: 0.72, time: 16.01 },
+  { progress: 0.92, time: 21.37 },
+  { progress: 1, time: 24.24 },
 ] as const;
 
 const labels = {
@@ -152,6 +108,8 @@ const labels = {
     scroll: "Scroll to walk through",
     loading: "Preparing the store",
     walkthrough: "Store walkthrough",
+    walkthroughSummary:
+      "Walk from HKTCG’s entrance past the red plaque T—the T stands for Trading—then card displays, the service counter and main-floor trading tables.",
     menu: "Menu",
     nav: ["Walkthrough", "Visit", "Play & Events", "Card Services", "Shop"],
     endLabel: "You are inside",
@@ -190,6 +148,7 @@ const labels = {
     scroll: "向下捲動，走進店內",
     loading: "正在準備店內導覽",
     walkthrough: "店內導覽",
+    walkthroughSummary: "從 HKTCG 入口出發，經過紅色牌片 T——T 代表 Trading（交易）——再到卡牌陳列牆、服務櫃檯及店內交易枱。",
     menu: "選單",
     nav: ["店內導覽", "到訪", "對戰及活動", "卡牌服務", "網店"],
     endLabel: "你已走進店內",
@@ -249,18 +208,17 @@ function timeForProgress(progress: number, duration: number) {
   return duration;
 }
 
-function CueTitle({ cue, language, heading = "h2" }: { cue: CinemaCue; language: Language; heading?: "h1" | "h2" }) {
-  const Heading = heading;
-  if (cue.id === "trading" && language === "en") {
+function MomentStatement({ moment, language }: { moment: CinemaMoment; language: Language }) {
+  if (moment.id === "trading" && language === "en") {
     return (
-      <Heading className="cinema-title cinema-title--trading">
-        <span className="sr-only">The T stands for Trading.</span>
-        <span aria-hidden="true">The T stands for</span>
-        <strong aria-hidden="true">Trading.</strong>
-      </Heading>
+      <>
+        <span>The T stands for</span>
+        <strong>Trading.</strong>
+      </>
     );
   }
-  return <Heading className="cinema-title">{cue.title[language]}</Heading>;
+
+  return moment.statement[language];
 }
 
 function CinematicWalkthrough({ language }: { language: Language }) {
@@ -271,13 +229,11 @@ function CinematicWalkthrough({ language }: { language: Language }) {
     url: string;
   }>();
   const [readyPlaybackSource, setReadyPlaybackSource] = useState<string>();
-  const [activeCue, setActiveCue] = useState(0);
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const progressRef = useRef<HTMLProgressElement | null>(null);
-  const cueRefs = useRef<Array<HTMLElement | null>>([]);
+  const momentRefs = useRef<Array<HTMLElement | null>>([]);
   const renderFrameRef = useRef<(() => void) | null>(null);
-  const activeCueRef = useRef(0);
   const metadataReadyRef = useRef(false);
   const latestTargetRef = useRef(0);
   const objectUrlRef = useRef<string>();
@@ -318,8 +274,8 @@ function CinematicWalkthrough({ language }: { language: Language }) {
       }
 
       const nextSource = mobile.matches
-        ? "/media/cinematic/walkthrough-mobile.mp4"
-        : "/media/cinematic/walkthrough-desktop.mp4";
+        ? "/media/cinematic/walkthrough-oneshot-mobile.mp4"
+        : "/media/cinematic/walkthrough-oneshot-desktop.mp4";
 
       if (selectedSourceRef.current !== nextSource) {
         selectedSourceRef.current = nextSource;
@@ -367,7 +323,7 @@ function CinematicWalkthrough({ language }: { language: Language }) {
       signal: controller.signal,
     })
       .then((response) => {
-        if (!response.ok) throw new Error(`Unable to load mobile walkthrough: ${response.status}`);
+        if (!response.ok) throw new Error(`Unable to load store walkthrough: ${response.status}`);
         return response.blob();
       })
       .then((blob) => {
@@ -417,22 +373,18 @@ function CinematicWalkthrough({ language }: { language: Language }) {
 
       if (progressRef.current) progressRef.current.value = progress;
 
-      let nextActive = 0;
-      cueRanges.forEach((range, index) => {
-        if (progress >= range.start) nextActive = index;
-        const opacity = cueOpacity(progress, range.start, range.end, index === cueRanges.length - 1);
-        const node = cueRefs.current[index];
+      cinemaMoments.forEach((moment, index) => {
+        const opacity = cueOpacity(
+          progress,
+          moment.start,
+          moment.end,
+          index === cinemaMoments.length - 1,
+        );
+        const node = momentRefs.current[index];
         if (!node) return;
-        node.style.setProperty("--cue-opacity", opacity.toFixed(4));
-        node.style.setProperty("--cue-shift", `${((1 - opacity) * 28).toFixed(2)}px`);
-        node.style.setProperty("--cue-scale", (0.985 + opacity * 0.015).toFixed(4));
-        node.style.pointerEvents = opacity > 0.72 ? "auto" : "none";
+        node.style.setProperty("--moment-opacity", opacity.toFixed(4));
+        node.style.setProperty("--moment-shift", `${((1 - opacity) * 18).toFixed(2)}px`);
       });
-
-      if (nextActive !== activeCueRef.current) {
-        activeCueRef.current = nextActive;
-        setActiveCue(nextActive);
-      }
 
       const video = videoRef.current;
       if (video && metadataReadyRef.current && Number.isFinite(video.duration)) {
@@ -548,7 +500,6 @@ function CinematicWalkthrough({ language }: { language: Language }) {
   };
 
   const videoReady = Boolean(playbackSource && readyPlaybackSource === playbackSource);
-  const activePoster = cinemaCues[activeCue];
 
   return (
     <section
@@ -556,15 +507,16 @@ function CinematicWalkthrough({ language }: { language: Language }) {
       ref={sectionRef}
       className="cinema"
       data-mode={mode}
-      data-active={activeCue}
-      data-film-ready={videoReady}
       aria-label={l.walkthrough}
       onPointerDown={primeVideo}
     >
+      <h1 className="sr-only">{cinemaMoments[0].statement[language]}</h1>
+      <p className="sr-only">{l.walkthroughSummary}</p>
+
       <div className="cinema-stage">
         <picture className="cinema-poster">
-          <source media="(max-width: 767px)" srcSet={activePoster.posterMobile} />
-          <img src={activePoster.posterDesktop} alt="" width={1440} height={810} />
+          <source media="(max-width: 767px)" srcSet={cinemaMoments[0].posterMobile} />
+          <img src={cinemaMoments[0].posterDesktop} alt="" width={1440} height={810} />
         </picture>
         {playbackSource ? (
           <video
@@ -588,83 +540,51 @@ function CinematicWalkthrough({ language }: { language: Language }) {
           />
         ) : null}
         <div className="cinema-vignette" aria-hidden="true" />
-        <div className="cinema-overlays">
-          {cinemaCues.map((cue, index) => (
-            <article
-              key={cue.id}
+        <div className="cinema-overlays" aria-hidden="true">
+          {cinemaMoments.map((moment, index) => (
+            <p
+              key={moment.id}
               ref={(node) => {
-                cueRefs.current[index] = node;
+                momentRefs.current[index] = node;
               }}
-              className={`cinema-cue cinema-cue--${cue.align} cinema-cue--${cue.id}`}
-              aria-hidden={activeCue !== index}
+              className={`cinema-moment cinema-moment--${moment.id}`}
             >
-              <p className="cinema-marker">
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                {cue.marker[language]}
-              </p>
-              <CueTitle cue={cue} language={language} heading={index === 0 ? "h1" : "h2"} />
-              <p className="cinema-body">{cue.body[language]}</p>
-              <div className="cinema-actions">
-                {index === 0 ? (
-                  <>
-                    <a className="button button--signal" href="#visit" tabIndex={activeCue === index ? 0 : -1}>
-                      {l.visit} <span aria-hidden="true">↗</span>
-                    </a>
-                    <a className="text-link text-link--light" href="#visit" tabIndex={activeCue === index ? 0 : -1}>
-                      {l.skip}
-                    </a>
-                  </>
-                ) : cue.action && cue.actionHref ? (
-                  <a
-                    className="cinema-inline-link"
-                    href={cue.actionHref}
-                    tabIndex={activeCue === index ? 0 : -1}
-                  >
-                    {cue.action[language]} <span aria-hidden="true">↗</span>
-                  </a>
-                ) : null}
-              </div>
-            </article>
+              <MomentStatement moment={moment} language={language} />
+            </p>
           ))}
         </div>
 
         <div className="cinema-status" aria-hidden="true">
-          <span className="cinema-status__cue">
-            {String(activeCue + 1).padStart(2, "0")} / {String(cinemaCues.length).padStart(2, "0")}
-          </span>
           <progress ref={progressRef} max={1} value={0} />
-          <span>{videoReady ? l.scroll : l.loading}</span>
+          <span>{l.scroll}</span>
         </div>
+        {!videoReady && mode !== "static" ? (
+          <p className="cinema-loading" role="status" aria-atomic="true">
+            {l.loading}
+          </p>
+        ) : null}
         <a className="cinema-skip" href="#visit">
           {l.skip} ↓
         </a>
       </div>
 
       <div className="cinema-static">
-        {cinemaCues.map((cue, index) => (
-          <article className="static-scene" key={cue.id} data-align={cue.align}>
+        {cinemaMoments.map((moment, index) => (
+          <article className="static-scene" key={moment.id}>
             <picture>
-              <source media="(max-width: 767px)" srcSet={cue.posterMobile} />
+              <source media="(max-width: 767px)" srcSet={moment.posterMobile} />
               <img
-                src={cue.posterDesktop}
-                alt={cue.alt[language]}
+                src={moment.posterDesktop}
+                alt={moment.alt[language]}
                 width={1440}
                 height={810}
                 loading={index === 0 ? "eager" : "lazy"}
               />
             </picture>
             <div className="static-scene__copy">
-              <p className="cinema-marker">
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                {cue.marker[language]}
+              <p className={`static-statement static-statement--${moment.id}`} aria-hidden="true">
+                <MomentStatement moment={moment} language={language} />
               </p>
-              <CueTitle cue={cue} language={language} heading={index === 0 ? "h1" : "h2"} />
-              <p className="cinema-body">{cue.body[language]}</p>
-              {index === 0 ? (
-                <div className="cinema-actions">
-                  <a className="button button--signal" href="#visit">{l.visit} ↗</a>
-                </div>
-              ) : null}
             </div>
           </article>
         ))}
@@ -745,7 +665,7 @@ export function HomeExperience() {
           <div className="experience-media">
             <picture>
               <source media="(max-width: 767px)" srcSet="/media/cinematic/community-mobile.jpg" />
-              <img src="/media/cinematic/community-desktop.jpg" alt={cinemaCues[4].alt[language]} width={1440} height={810} loading="lazy" />
+              <img src="/media/cinematic/community-desktop.jpg" alt={storeScenes.community.alt[language]} width={1440} height={810} loading="lazy" />
             </picture>
           </div>
           <div className="experience-copy">
@@ -789,7 +709,7 @@ export function HomeExperience() {
         <section className="shop-section" aria-labelledby="shop-title">
           <picture className="shop-media">
             <source media="(max-width: 767px)" srcSet="/media/cinematic/collect-mobile.jpg" />
-            <img src="/media/cinematic/collect-desktop.jpg" alt={cinemaCues[2].alt[language]} width={1440} height={810} loading="lazy" />
+            <img src="/media/cinematic/collect-desktop.jpg" alt={storeScenes.collect.alt[language]} width={1440} height={810} loading="lazy" />
           </picture>
           <div className="shop-copy">
             <p className="section-marker">Online / Pickup / Delivery</p>

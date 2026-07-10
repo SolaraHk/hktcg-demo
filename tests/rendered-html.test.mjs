@@ -30,12 +30,13 @@ test("server-renders the HKTCG destination homepage", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>HKTCG — Play\. Collect\. Connect\.<\/title>/i);
-  assert.match(html, /Enter[\s\S]*Hong Kong[’']s[\s\S]*card destination\./i);
+  assert.match(html, /Walk inside HKTCG\./i);
   assert.match(html, /The T stands[\s\S]*for Trading\./i);
+  assert.match(html, /red plaque T[\s\S]*card displays[\s\S]*main-floor trading tables/i);
   assert.match(html, /Skip walkthrough/i);
   assert.match(html, /Plan your visit/i);
   assert.match(html, /2\/F, iSQUARE, 63 Nathan Road/i);
-  assert.match(html, /Bring a deck[\s\S]*Join the table/i);
+  assert.match(html, /Bring a deck[\s\S]*Find a game/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
 
